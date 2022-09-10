@@ -11,7 +11,7 @@ import java.net.URL;
 class URLConnector extends Thread {
 
     //rasberry pi ip
-    final private String URL_IP = "192.168.13.168:8000" ;
+    final private String URL_IP = "192.168.147.168:8000" ;
     //이후 url value로 변경(rest api 만들기)
     private String URL;
     private int id = -1;

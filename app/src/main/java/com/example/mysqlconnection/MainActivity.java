@@ -13,8 +13,12 @@ import org.json.JSONException;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
+    TextView text_sensor_row_length;
+    TextView text_sensor_column_length;
+    TextView text_sensor_column;
+    TextView text_sensor_result;
 
-    TextView text_result;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,9 +26,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        text_result = findViewById(R.id.text_result);
+        /* sensor database */
+        //text view
+        text_sensor_row_length = findViewById(R.id.text_sensor_row_length);
+        text_sensor_column_length = findViewById(R.id.text_sensor_column_length);
+        text_sensor_column = findViewById(R.id.text_sensor_column);
+        text_sensor_result = findViewById(R.id.text_sensor_result);
 
-        URLConnector task = new URLConnector("sensor");
+
+        //url connect
+        URLConnector task = new URLConnector("sensor");       //"tram" , "sensor"
         task.start();
         try{
             task.join();
@@ -33,24 +44,39 @@ public class MainActivity extends AppCompatActivity {
         catch(InterruptedException e){
 
         }
-
+        //http response
         String Json_result = task.getResult();
 
-        Log.i("check_response",task.getResult());
-        text_result.setText(task.getResult());
 
+        //json parsing
         ParsingJson sensorParsing;
 
         try {
             sensorParsing = new ParsingJson(Json_result);
-            Log.i("check_parsing_length", String.valueOf(sensorParsing.getParsingLength()));
 
-            for(int i=0; i<sensorParsing.getParsingLength(); i++){
-                Log.i("check_parsing_value",String.valueOf(i)+ Arrays.toString(sensorParsing.getParsingResult()[i]));
+            //행 개수 갖고오기
+            int row_length = sensorParsing.getRowLength();
+            //column 개수 갖고오기
+            int column_length = sensorParsing.getColumnLength();
+            //column 가져오기
+            String[] column = sensorParsing.getColumn();
+
+            text_sensor_row_length.setText(String.valueOf(row_length));
+            text_sensor_column_length.setText(String.valueOf(column_length));
+            text_sensor_column.setText(Arrays.toString(column));
+
+
+            //database 값 parsing 결과 가져오기
+            String[][] parsingResult = sensorParsing.getParsingResult();
+            for(int i=0; i<parsingResult.length; i++){
+                Log.i("check_parsing_value",String.valueOf(i)+ Arrays.toString(parsingResult[i]));
+                text_sensor_result.append(Arrays.toString(parsingResult[i]));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+
 
 
 
